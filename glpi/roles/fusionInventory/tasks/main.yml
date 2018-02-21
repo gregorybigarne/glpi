@@ -1,0 +1,71 @@
+---
+# tasks file for fusion inventory
+- name: Installation de bzip2
+  apt: name=bzip2 state=present
+
+  #- name: Création du dossier fusioninventory
+  #file: path=/var/www/glpi/plugins/fusioninventory state=directory
+
+- name: Récupération de fusionInventory
+  get_url: url=https://github.com/fusioninventory/fusioninventory-for-glpi/releases/download/glpi9.2%2B1.0/glpi-fusioninventory-{{ fusion_version }}.tar.bz2 dest=/var/www/glpi/plugins
+
+- name: Extration de fusionInventory
+  command: bzip2 -d /var/www/glpi/plugins/glpi-fusioninventory-{{ fusion_version }}.tar.bz2
+
+  #- name: copie du tar
+  #copy: src=/var/www/glpi/plugins/fusioninventory/glpi-fusioninventory-{{ fusion_version }}.tar dest=/var/www/glpi/plugins/fusioninventory
+
+- name: Extraction du tar
+  unarchive: src=/var/www/glpi/plugins/glpi-fusioninventory-{{ fusion_version }}.tar dest=/var/www/glpi/plugins remote_src=yes
+
+
+- name: Suppression du .tar
+  file: path='/var/www/glpi/plugins/glpi-fusioninventory-{{ fusion_version }}.tar' state=absent
+
+- name: suppression de l'ancien ficlients
+  file: path='/var/www/ficlients' state=absent
+
+- name: Création du dossier ficlients
+  file: path='/var/www/ficlients' state=directory
+
+- name: Téléchargement du client windows
+  get_url: url=https://github.com/g-bougard/fusioninventory-agent-windows-installer/releases/download/2.4-rc2/fusioninventory-agent_windows-x64_2.4-rc2.exe dest=/var/www/ficlients
+
+- name: Téléchargement du client windows
+  get_url: url=https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.4/fusioninventory-agent_windows-x86_2.4.exe dest=/var/www/ficlients
+
+- name: Création du lien symbolique
+  file: src=/var/www/ficlients dest=/var/www/glpi/ficlients state=link
+- name: Création du lien symbolique
+  file: src=/var/www/ficlients dest=/var/www/glpi/ficlients state=link
+
+- name: Ajout de la ligne autoindex
+  lineinfile: insertafter='sendfile on;' dest=/etc/nginx/nginx.conf backup=yes line='        autoindex on;' state=present regexp='autoindex'
+
+- name: redemarrage de php7.0-fpm
+  service: name=php7.0-fpm state=restarted
+
+- name: redemarrage de nginx
+  service: name=nginx state=restarted
+
+- name: Récupération de goss
+  get_url: url=https://goss.rocks/install dest=/root
+
+- name: changement des droits du script install
+  file: path='/root/install.sh' mode=0744
+
+- name: Lancement du script d'installation
+  command: /root/install.sh
+
+- name: Suppression du script d'installation
+  file: path='/root/install.sh' state=absent
+
+- name: Suppression de l'ancien goss.yaml
+  file: path='/root/goss.yaml' state=absent
+
+- name: Importation du goss.yaml
+  copy: src=/root/glpi/goss.yaml dest=/root
+
+- name: changement des droits du script goss.yaml
+  file: path='/root/goss.yaml' mode=0744
+

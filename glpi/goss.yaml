@@ -1,0 +1,56 @@
+port:
+  tcp:22:
+    listening: true
+    ip:
+    - 0.0.0.0
+  tcp6:22:
+    listening: true
+    ip:
+    - '::'
+service:
+  sshd:
+    enabled: true
+    running: true
+user:
+  sshd:
+    exists: true
+    uid: 106
+    gid: 65534
+    groups:
+    - nogroup
+    home: /run/sshd
+    shell: /usr/sbin/nologin
+command:
+  ip r|grep default:
+    exit-status: 0
+    stdout:
+    - default via 192.168.0.1 dev enp0s3 onlink
+    stderr: []
+    timeout: 10000
+dns:
+  ns.sio.lan:
+    resolvable: true
+    addrs:
+    - 10.121.38.7
+    timeout: 500
+process:
+  sshd:
+    running: true
+interface:
+  enp0s3:
+    exists: true
+    addrs:
+    - 192.168.0.50/24
+http:
+  http://localhost:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body: [glpi]
+  http://depl.sio.lan:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body: []

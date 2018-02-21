@@ -1,0 +1,16 @@
+---  
+- name: creation repertoire {{ glpi_dir }}
+  file: path={{ glpi_dir }} state=directory owner=www-data group=www-data
+
+- name: Recup archive GLPI
+  get_url: url=https://github.com/glpi-project/glpi/releases/download/{{ glpi_version }}/glpi-{{ glpi_version }}.tgz dest=/tmp/glpi.tgz
+              validate_certs=no
+
+- name: Extract GLPI  
+  unarchive: src=/tmp/glpi.tgz dest=/var/www/ copy=no
+              
+- name: changement attributs {{ glpi_dir }}
+  file: path={{ glpi_dir }} owner=www-data group=www-data mode=0755 recurse=yes
+
+- name: changement attributs {{ glpi_dir }}/plugins
+  file: path={{ glpi_dir }}/plugins mode=0777 recurse=yes

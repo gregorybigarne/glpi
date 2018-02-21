@@ -1,0 +1,18 @@
+---
+- hosts: localhost 
+  vars:
+        glpi_version: "9.2"
+        glpi_dir: "/var/www/glpi"
+        glpi_dbhost: "127.0.0.1"
+        glpi_dbname: "glpi"
+        glpi_dbuser: "glpi"
+        glpi_dbpasswd: "glpi"
+        fusion_version: "9.2.1.0"
+
+  roles:
+    - nginx
+    - php
+    - mariadb
+    - glpi
+    - fusionInventory
+

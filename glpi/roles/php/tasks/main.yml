@@ -1,0 +1,46 @@
+---
+# tasks file for php
+- name: Installation php7.0-fpm
+  apt: name=php7.0-fpm state=present
+
+- name: Installation php7-curl
+  apt: name=php7.0-curl state=present
+
+- name: Installation php7-gd
+  apt: name=php7.0-gd state=present
+
+- name: Installation php7-cli
+  apt: name=php7.0-cli state=present
+
+- name: Installation php7-imap
+  apt: name=php7.0-imap state=present
+
+- name: Installation php7-ldap
+  apt: name=php7.0-ldap  state=present
+
+- name: Installation php-apcu
+  apt: name=php-apcu state=present
+
+- name: Installation php7-xml
+  apt: name=php7.0-xml state=present
+
+- name: Installation php7-xmlrpc
+  apt: name=php7.0-xmlrpc state=present
+
+- name: Installation php7-mbstring
+  apt: name=php7.0-mbstring state=present
+
+- name: Installation php7-mysql
+  apt: name=php7.0-mysql state=present
+
+- name: Changement listen dans www.conf de php7
+  replace: dest=/etc/php/7.0/fpm/pool.d/www.conf
+                regexp='listen = /run/php/php7.0-fpm.sock'
+                replace='listen = 127.0.0.1:9000'
+                backup=yes
+- name: Effacement block nginx default
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Creation fichier block nginx
+  template: src=block.j2 dest=/etc/nginx/sites-enabled/glpi
+
